@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- IMPORTANT ----
+    // Replace 'owner@cloudbusiness.com' below with your real admin email —
+    // it must exactly match the ADMIN_EMAILS list in js/admin-config.js.
+    // You can list more than one admin email if needed.
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email in ['owner@cloudbusiness.com'];
+    }
+
+    // Menu: everyone (including logged-out visitors) can read it so the
+    // site works for guests browsing the menu. Only admins can change it.
+    match /menu/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Orders: a signed-in customer can create their own order and read
+    // only their own orders. Admins can read every order and update its
+    // status. Nobody can delete an order (keeps a clean history).
+    match /orders/{orderId} {
+      allow create: if request.auth != null
+                     && request.resource.data.uid == request.auth.uid;
+      allow read: if request.auth != null &&
+                  (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+  }
+}
