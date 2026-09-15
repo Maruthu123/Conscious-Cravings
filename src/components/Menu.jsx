@@ -44,7 +44,9 @@ export default function Menu() {
     try {
       await addDoc(collection(db, 'orders'), {
         uid: user.uid,
-        customerEmail: user.email,
+        customerEmail: user.email || '',
+        customerName: user.displayName || '',
+        customerPhone: user.phoneNumber || '',
         dayLabel: day.label,
         mealName: meal.name,
         price: meal.price,

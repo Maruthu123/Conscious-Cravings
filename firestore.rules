@@ -4,11 +4,12 @@ service cloud.firestore {
 
     // ---- IMPORTANT ----
     // Replace 'owner@cloudbusiness.com' below with your real admin email —
-    // it must exactly match the ADMIN_EMAILS list in js/admin-config.js.
-    // You can list more than one admin email if needed.
+    // it must exactly match the ADMIN_EMAILS list in src/lib/adminConfig.js
+    // (lowercase, same spelling). You can list more than one admin email.
     function isAdmin() {
       return request.auth != null &&
-        request.auth.token.email in ['owner@cloudbusiness.com'];
+        request.auth.token.email != null &&
+        request.auth.token.email.lower() in ['owner@cloudbusiness.com'];
     }
 
     // Menu: everyone (including logged-out visitors) can read it so the
@@ -21,6 +22,10 @@ service cloud.firestore {
     // Orders: a signed-in customer can create their own order and read
     // only their own orders. Admins can read every order and update its
     // status. Nobody can delete an order (keeps a clean history).
+    //
+    // Note on queries: a customer must query with
+    // where('uid', '==', auth.uid) or the read is rejected. The app does
+    // exactly that in src/pages/Account.jsx.
     match /orders/{orderId} {
       allow create: if request.auth != null
                      && request.resource.data.uid == request.auth.uid;

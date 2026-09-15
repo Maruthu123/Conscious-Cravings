@@ -3,14 +3,23 @@
 // treated as an admin — they see the Admin link in the nav and can open
 // /admin to edit the menu and update order status.
 //
-// IMPORTANT: this list must exactly match the list inside firestore.rules
-// (the `isAdmin()` function) — that's what actually enforces it on the
-// server. This file only controls what the *website* shows; the Firestore
-// rules are what actually stop a non-admin from writing menu/order changes.
+// >>> ACTION NEEDED <<<
+// Put YOUR real login email below, in lowercase. The same address must
+// also go inside firestore.rules -> isAdmin(), because that is what
+// actually enforces it on the server. If the two lists do not match, the
+// Admin page loads but the order list comes back empty with a
+// "Missing or insufficient permissions" error.
+//
+// After editing firestore.rules, deploy it:
+//     firebase deploy --only firestore:rules
+// (or paste the file into Firebase Console -> Firestore -> Rules -> Publish)
 export const ADMIN_EMAILS = [
   'owner@cloudbusiness.com', // <-- replace with your real email
 ];
 
 export function isAdminEmail(email) {
-  return !!email && ADMIN_EMAILS.includes(email.toLowerCase());
+  if (!email) return false;
+  return ADMIN_EMAILS.map((e) => e.toLowerCase()).includes(
+    email.trim().toLowerCase()
+  );
 }

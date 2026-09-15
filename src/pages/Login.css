@@ -441,7 +441,8 @@
   gap: 12px;
 }
 
-.social-row span {
+.social-row span,
+.social-row .social-btn {
   width: 42px;
   height: 42px;
 
@@ -456,6 +457,62 @@
   border: 1px solid #ece3d3;
 
   color: #8a7a66;
+
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.social-row .social-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: #e85b3f;
+  color: #e85b3f;
+  box-shadow: 0 6px 14px rgba(232, 91, 63, 0.18);
+}
+
+.social-row .social-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---------- Alternate sign-in panels (email link / mobile OTP) ---------- */
+
+.panel-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #8a7a66;
+
+  cursor: pointer;
+}
+
+.panel-back:hover {
+  color: #e85b3f;
+}
+
+.panel-hint {
+  margin-top: 14px;
+
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #8a7a66;
+  text-align: center;
+}
+
+/* Firebase injects the invisible reCAPTCHA badge here — keep it out of
+   the layout so it can never push the card around. */
+#recaptcha-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 /* ---------- Bottom switch ---------- */

@@ -107,3 +107,27 @@ scroll on every route change (it skips the homepage when it is carrying a
 - The menu editor showed a blank screen if the menu failed to load; it now
   shows the error.
 - Added a favicon and rebuilt `dist/` so it matches the source.
+
+## 7. "Nothing happens when I click in the Orders page"
+Two separate things were wrong.
+
+**The control was invisible.** The status picker was
+`<select className="admin-field">`, but the CSS rule only matched
+`.admin-field select` — a select *inside* an element with that class. A
+select that carries the class itself matched nothing, so it rendered as a
+bare unstyled native control that reads as plain text. The selector now
+matches both forms.
+
+**Failures were silent.** `updateDoc()` had no error handler. When
+Firestore rejected the write (the usual cause: your admin email is not in
+`firestore.rules`), the value snapped back to what it was and the screen
+looked unchanged — exactly like a dead click.
+
+The dropdown is now replaced with four visible stage pills plus a green
+"Move to <next stage>" button. The current stage is highlighted, completed
+stages are greyed, and every row shows "Saving…", "Updated ✓", or the exact
+error text returned by Firestore.
+
+If you see a permission error there, it is the admin-email setup from
+section 3 — put your login email in `src/lib/adminConfig.js` and in
+`isAdmin()` inside `firestore.rules`, then publish the rules.

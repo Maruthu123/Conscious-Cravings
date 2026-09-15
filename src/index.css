@@ -567,7 +567,8 @@ img { max-width: 100%; display: block; }
 @media (max-width: 760px) { .admin-meal-grid { grid-template-columns: 1fr; } }
 .admin-field { margin-bottom: 10px; }
 .admin-field label { display: block; font-size: 11.5px; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
-.admin-field input, .admin-field select, .admin-field textarea {
+.admin-field input, .admin-field select, .admin-field textarea,
+select.admin-field, input.admin-field, textarea.admin-field {
   width: 100%; border: 1.5px solid var(--line); background: var(--cream);
   border-radius: 9px; padding: 8px 10px; font-size: 13.5px; font-family: inherit;
 }
@@ -650,4 +651,160 @@ img { max-width: 100%; display: block; }
   height: 85px;
   object-fit: contain;
   display: block;
+}
+/* =====================================================================
+   Page shell for /account and /admin
+   These two pages used to render loose inside <main> with only inline
+   padding, so they sat higher than every other page and a long, unbroken
+   line of text (the Firestore index URL) pushed the whole layout sideways.
+   ===================================================================== */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+.page { min-height: calc(100vh - 340px); }
+.page-hero { padding: 48px 0 18px; }
+.page-hero-meta { margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--chili); }
+.page-body { padding-bottom: 80px; }
+
+/* Long URLs and error strings wrap instead of stretching the page. */
+.empty-state, .error-detail, .admin-order-row .order-meta {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.error-state {
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+  background: #FFF4F1; border: 1px solid #F3C9BE; border-radius: 16px;
+  padding: 22px 20px; color: var(--ink); text-align: center;
+}
+.error-state b { color: var(--chili); }
+.error-detail { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; max-width: 640px; }
+.error-detail code {
+  background: var(--cream-deep); border-radius: 5px; padding: 1px 5px; font-size: 12px;
+}
+
+/* ---------- Order card + live tracker (account page) ---------- */
+.order-card { display: block; }
+.order-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap;
+}
+
+.track { margin-top: 20px; padding-top: 6px; }
+.track-line {
+  position: relative; height: 3px; border-radius: 3px;
+  background: var(--cream-deep);
+  margin: 0 11% 12px;
+}
+.track-line-fill {
+  position: absolute; inset: 0 auto 0 0; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--turmeric), var(--leaf));
+}
+.track-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.track-step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+.track-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11.5px; font-weight: 700;
+  background: var(--cream-deep); color: var(--ink-soft);
+  border: 2px solid var(--cream-deep);
+  margin-top: -25px;
+}
+.track-step.is-done .track-dot { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+.track-step.is-active .track-dot {
+  background: var(--turmeric); border-color: var(--turmeric); color: #fff;
+  box-shadow: 0 0 0 5px rgba(226, 147, 47, 0.18);
+}
+.track-label { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); }
+.track-hint { font-size: 11px; color: var(--ink-soft); opacity: 0.8; }
+.track-step.is-done .track-label, .track-step.is-active .track-label { color: var(--ink); }
+
+@media (max-width: 560px) {
+  .track-line { margin: 0 11% 10px; }
+  .track-hint { display: none; }
+  .track-label { font-size: 11px; }
+}
+
+/* ---------- Admin dashboard stats ---------- */
+.stat-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;
+}
+@media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+
+.stat-card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
+  padding: 18px 16px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stat-card.accent { border-color: var(--turmeric); background: #FFFBF3; }
+.stat-value { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; }
+.stat-label { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; }
+
+.stat-breakdown {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
+  padding: 18px 20px; box-shadow: var(--shadow); margin-bottom: 18px;
+}
+.stat-breakdown h3 { font-size: 16px; margin-bottom: 12px; }
+.breakdown-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13.5px;
+}
+.breakdown-row:last-child { border-bottom: none; }
+.breakdown-count { font-weight: 700; }
+.breakdown-empty { color: var(--ink-soft); font-size: 13.5px; }
+
+.tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 19px; height: 19px; margin-left: 8px; padding: 0 5px;
+  border-radius: 999px; background: var(--chili); color: #fff;
+  font-size: 11px; font-weight: 700;
+}
+.admin-tab.active .tab-badge { background: #fff; color: var(--chili); }
+
+.admin-tab.alert-toggle { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; }
+.admin-tab.alert-toggle.on { border-color: var(--leaf); color: var(--leaf); }
+
+/* ---------- Admin order stage controls ----------
+   The old status control was a bare <select> that picked up no styling at
+   all (the rule above only matched selects *inside* .admin-field, not a
+   select that carried the class itself). It rendered as plain unstyled
+   text, which is why it looked like there was nothing to click. Replaced
+   with real, obvious buttons. */
+.orders-hint { font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; }
+
+.admin-order-row { align-items: flex-start; }
+.stage-controls { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.stage-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+.stage-btn {
+  border: 1.5px solid var(--line); background: var(--paper); color: var(--ink-soft);
+  border-radius: 999px; padding: 6px 13px; font-size: 12.5px; font-weight: 700;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    transform 0.12s ease;
+}
+.stage-btn:hover:not(:disabled) {
+  border-color: var(--turmeric); color: var(--ink); transform: translateY(-1px);
+}
+.stage-btn.past { background: var(--cream-deep); color: var(--ink-soft); border-color: transparent; }
+.stage-btn.current {
+  background: linear-gradient(135deg, var(--chili), var(--turmeric));
+  color: #fff; border-color: transparent;
+}
+.stage-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.stage-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.stage-next {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none; background: var(--leaf); color: #fff;
+  border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 700;
+}
+.stage-next:hover:not(:disabled) { background: var(--leaf-deep); }
+.stage-next:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.stage-msg { font-size: 12.5px; font-weight: 600; color: var(--ink-soft); max-width: 320px; }
+.stage-msg.ok { color: var(--leaf); }
+.stage-msg.bad { color: var(--chili); overflow-wrap: anywhere; }
+
+@media (max-width: 620px) {
+  .stage-controls { align-items: stretch; width: 100%; }
+  .stage-row, .stage-foot { justify-content: flex-start; }
 }
