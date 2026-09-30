@@ -3317,7 +3317,7 @@ img { max-width: 100%; display: block; }
 .floating-contact {
   position: fixed;
   bottom: 24px;
-  right: 22px;
+  right: 22px;  
   display: flex;
   flex-direction: column;
   gap: 14px;
